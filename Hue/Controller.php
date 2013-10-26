@@ -12,16 +12,29 @@ class Controller {
 		);
 	}
 
+	public function getLightById($id) {
+		$response = $this->api->sendRequest('/lights/'.$id);
+
+		$light = new Light(
+			$this->api,
+			array(
+				'id' =>	$id,
+				'name' => $response['name'],
+				'type' => $response['type'],
+				'modelid' => $response['modelid'],
+				'swversion' => $response['swversion'],
+			)
+		);
+
+		return $light;
+	}
+
 	public function getLights() {
 		$response = $this->api->sendRequest('/lights');
 		$lights = [];
 
-		foreach($response as $index => $light) {
-			$lights[] = new Light(
-				$this->api,
-				$index,
-				$light['name']
-			);
+		foreach($response as $id => $light) {
+			$lights[] = $this->getLightById($id);
 		}
 
 		return $lights;

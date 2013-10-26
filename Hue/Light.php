@@ -1,34 +1,39 @@
 <?php
 namespace Lights\Hue;
 
-class Light {
+use \Lights\Util\DataObject;
+
+class Light extends DataObject {
 	private $api;
-	private $index;
 
-	public $name;
+	static $properties = [
+		'id' => null,
+		'state' => null,
+		'type' => null,
+		'name' => null,
+		'modelid' => null,
+		'swversion' => null
+	];
 
-	public function __construct(Api $api, $index, $name) {
+	public function __construct(Api $api, $data) {
+		parent::__construct($data);
 		$this->api = $api;
-		$this->index = $index;
-		$this->name = $name;
 	}
 
 	public function getState() {
-		$response = $this->api->sendRequest('/lights/'.$this->index);
+		$response = $this->api->sendRequest('/lights/'.$this->id);
 		$state = $response['state'];
-
-		// TODO: Check light mode to know which color state to look at
 
 		return new LightState(
 			$state['bri'],
-			$state['x'],
-			$state['y']
+			$state['xy'][0],
+			$state['xy'][1]
 		);
 	}
 
 	public function setState(LightState $state) {
 		$this->api->sendRequest(
-			'/lights/'.$this->index.'/state',
+			'/lights/'.$this->id.'/state',
 			HTTP_METH_PUT,
 			json_encode([
 				'on' => ((int)$state->brightness) !== 0,
