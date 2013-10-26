@@ -4,8 +4,12 @@ namespace Lights\Hue;
 class Controller {
 	private $api;
 
-	public function __construct($url, $hash, $applicationName) {
-		$this->api = new Api($url, $hash, $applicationName);
+	public function __construct($config) {
+		$this->api = new Api(
+			$config->hue['url'],
+			$config->hue['hash'],
+			$config->hue['applicationName']
+		);
 	}
 
 	public function getLights() {
