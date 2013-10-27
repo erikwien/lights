@@ -17,36 +17,16 @@ class Layer extends Util\DataObject {
 		));
 	}
 
-	private function blendChannel($source, $destination) {
-		if(is_null($source)) {
-			return $destination;
-		}
-
-		if(is_null($destination)) {
-			return $source;
-		}
-
-		return $destination;
-	}
-
-	private function blend(LightState $source, LightState $destination) {
-		return new LightState(
-			$this->blendChannel($source->brightness, $destination->brightness),
-			$this->blendChannel($source->x, $destination->x),
-			$this->blendChannel($source->y, $destination->y)
-		);
-	}
-
 	public function apply($lightId, LightState $source) {
 		if(!$this->active) {
 			return $source;
 		}
 
-		$state = $this->blend($source, $this->state);
+		$state = $source->lerp($this->state, 1);
 
 		if(array_key_exists($lightId, $this->overrides)) {
-			// TODO: Or should be blend source with the override here?
-			$state = $this->blend($state, $this->overrides[$lightId]);
+			// TODO: Or should be lerp source with the override here?
+			$state = $state->lerp($this->overrides[$lightId], 1);
 		}
 
 		return $state;
