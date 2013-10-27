@@ -33,18 +33,26 @@ class Light extends DataObject {
 	}
 
 	public function setState(LightState $state) {
-		$this->api->sendRequest(
-			'/lights/'.$this->id.'/state',
-			HTTP_METH_PUT,
-			json_encode([
-				'on' => ((int)$state->brightness) !== 0,
-				'bri' => (int)$state->brightness,
-				'xy' => array(
-					(float)$state->x,
-					(float)$state->y
-				),
-				'alert' => 'none'
-			])
-		);
+		$data = [];
+
+		if(!is_null($state->brightness)) {
+			$data['on'] = ((int)$state->brightness) !== 0;
+			$data['bri'] = (int)$state->brightness;
+		}
+
+		if(!is_null($state->x) && !is_null($state->y)) {
+			$data['xy'] = [
+				(float)$state->x,
+				(float)$state->y
+			];
+		}
+
+		if(count($data)) {
+			$this->api->sendRequest(
+				'/lights/'.$this->id.'/state',
+				HTTP_METH_PUT,
+				json_encode($data)
+			);
+		}
 	}
 }
