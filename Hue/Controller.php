@@ -3,13 +3,19 @@ namespace Lights\Hue;
 
 class Controller {
 	private $api;
+	private $config;
 
 	public function __construct($config) {
+		$this->config = $config;
 		$this->api = new Api(
 			$config->hue['url'],
 			$config->hue['hash'],
 			$config->hue['applicationName']
 		);
+	}
+
+	public function getLayers() {
+		return $this->config->layers;
 	}
 
 	public function getLightById($id) {
@@ -34,7 +40,7 @@ class Controller {
 		$lights = [];
 
 		foreach($response as $id => $light) {
-			$lights[] = $this->getLightById($id);
+			$lights[$id] = $this->getLightById($id);
 		}
 
 		return $lights;

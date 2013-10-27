@@ -2,6 +2,7 @@
 namespace Lights\Hue;
 
 use \Lights\Util\DataObject;
+use \Lights\LightState;
 
 class Light extends DataObject {
 	private $api;

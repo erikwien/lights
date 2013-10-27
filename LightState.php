@@ -1,5 +1,5 @@
 <?php
-namespace Lights\Hue;
+namespace Lights;
 
 class LightState {
 	public $brightness;
