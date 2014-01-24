@@ -6,7 +6,7 @@ class LightState {
 	public $x;
 	public $y;
 
-	public function __construct($brightness, $x, $y) {
+	public function __construct($brightness = null, $x = null, $y = null) {
 		$this->brightness = $brightness;
 		$this->x = $x;
 		$this->y = $y;

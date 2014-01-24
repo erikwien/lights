@@ -3,15 +3,17 @@
 namespace Lights\Util;
 
 class DataObject {
-	public function __construct($propertyValues = null) {
+	public function __construct($propertyValues = null, $setRawProperties = false) {
 		// Set default values for all properties:
 		foreach($this->getDefaultValues() as $property => $defaultValue) {
 			$this->values[$property] = $defaultValue;
 		}
 
 		// Assign any incoming property values:
-		if($propertyValues) {
+		if($propertyValues && !$setRawProperties) {
 			$this->setProperties($propertyValues);
+		} else if($propertyValues) {
+			$this->setRawProperties($propertyValues);
 		}
 	}
 

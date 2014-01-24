@@ -17,8 +17,22 @@ class Light extends DataObject {
 	];
 
 	public function __construct(Api $api, $data) {
-		parent::__construct($data);
+		parent::__construct($data, true);
 		$this->api = $api;
+	}
+
+	public function setName($name) {
+		$response = $this->api->sendRequest(
+			'/lights/'.$this->id,
+			HTTP_METH_PUT,
+			json_encode([
+				'name' => $name
+			])
+		);
+
+		// TODO: Check response...
+
+		$this->setRawProperty('name', $name);
 	}
 
 	public function getState() {
@@ -33,7 +47,7 @@ class Light extends DataObject {
 	}
 
 	public function setState(LightState $state) {
-		$data = [];
+		$data = array();
 
 		if(!is_null($state->brightness)) {
 			$data['on'] = ((int)$state->brightness) !== 0;
@@ -41,14 +55,15 @@ class Light extends DataObject {
 		}
 
 		if(!is_null($state->x) && !is_null($state->y)) {
-			$data['xy'] = [
+			$data['xy'] = array(
 				(float)$state->x,
 				(float)$state->y
-			];
+			);
 		}
 
+
 		if(count($data)) {
-			$this->api->sendRequest(
+			$response = $this->api->sendRequest(
 				'/lights/'.$this->id.'/state',
 				HTTP_METH_PUT,
 				json_encode($data)

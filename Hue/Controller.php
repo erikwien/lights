@@ -1,6 +1,10 @@
 <?php
 namespace Lights\Hue;
 
+class UnknownLayerException extends \Exception {
+
+}
+
 class Controller {
 	private $api;
 	private $config;
@@ -14,12 +18,22 @@ class Controller {
 		);
 	}
 
+	public function getLayerById($id) {
+		if(!array_key_exists($id, $this->config->layers)) {
+			throw new UnknownLayerException('No layer with id '.var_export($id, true).' found in config file.');
+		}
+
+		return $this->config->layers[$id];
+	}
+
 	public function getLayers() {
 		return $this->config->layers;
 	}
 
 	public function getLightById($id) {
 		$response = $this->api->sendRequest('/lights/'.$id);
+
+		// TODO: Handle errors?
 
 		$light = new Light(
 			$this->api,
