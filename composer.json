@@ -1,0 +1,13 @@
+{
+    "name": "erikwien/lights",
+    "type": "library",
+    "description": "Library for communicating with Philips Hue light bulbs.",
+    "require": {
+        "php": ">=5.4"
+    },
+    "autoload": {
+        "psr-0": {
+            "Lights": "src/"
+        }
+    }
+}
