@@ -12,7 +12,7 @@ class Api {
 		$this->appName = $applicationName;
 	}
 
-	public function sendRequest($url, $method = HTTP_METH_GET, $data = null) {
+	public function sendRequest($url, $method = \HttpRequest::METH_GET, $data = null) {
 		$request = new \HttpRequest(
 			$this->baseUrl.$url,
 			$method

@@ -24,7 +24,7 @@ class Light extends DataObject {
 	public function setName($name) {
 		$response = $this->api->sendRequest(
 			'/lights/'.$this->id,
-			HTTP_METH_PUT,
+			\HttpRequest::METH_PUT,
 			json_encode([
 				'name' => $name
 			])
@@ -65,7 +65,7 @@ class Light extends DataObject {
 		if(count($data)) {
 			$response = $this->api->sendRequest(
 				'/lights/'.$this->id.'/state',
-				HTTP_METH_PUT,
+				\HttpRequest::METH_PUT,
 				json_encode($data)
 			);
 		}
