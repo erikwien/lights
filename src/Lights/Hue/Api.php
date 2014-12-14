@@ -1,6 +1,11 @@
 <?php
 namespace Lights\Hue;
 
+class HttpMethod {
+	const GET = 0;
+	const PUT = 1;
+}
+
 class Api {
 	public $hash;
 	public $baseUrl;
@@ -12,19 +17,33 @@ class Api {
 		$this->appName = $applicationName;
 	}
 
-	public function sendRequest($url, $method = \HttpRequest::METH_GET, $data = null) {
-		$request = new \HttpRequest(
-			$this->baseUrl.$url,
-			$method
-		);
+	public function sendRequest($url, $method = HttpMethod::GET, $data = null) {
+		$request = curl_init($this->baseUrl.$url);
 
-		if($data) {
-			$request->setPutData($data);
-			$request->setContentType('application/json');
+		curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
+
+		switch($method) {
+			case HttpMethod::GET:
+				break;
+
+			case HttpMethod::PUT:
+				$json = json_encode($data);
+				curl_setopt($request, CURLOPT_HTTPHEADER, [
+					'Content-Type: application/json',
+					'Content-Length: ' . strlen($json)
+				]);
+				curl_setopt($request, CURLOPT_CUSTOMREQUEST, 'PUT');
+				curl_setopt($request, CURLOPT_POSTFIELDS, $json);
+				break;
+
+			default:
+				throw new \Exception('Unsupported method '.var_export($method, true).'.');
 		}
 
-		$message = $request->send();
-		$response = json_decode(utf8_encode(utf8_decode($message->getBody())), true);
+		$result = curl_exec($request);
+		curl_close($request);
+
+		$response = json_decode($result, true);
 
 		if(is_null($response)) {
 			throw new \Exception('Got unparsable JSON back from API.');
